@@ -44,6 +44,7 @@ GPIO.setwarnings(False)
 GPIO.setup(26, GPIO.OUT)
 GPIO.setup(13, GPIO.OUT)
 GPIO.setup(5, GPIO.OUT)
+from gpiozero import PWMOutputDevice
 motor1 = PWMOutputDevice(4) # Can adjust speed simply
 
 logging.basicConfig(
