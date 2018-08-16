@@ -12,11 +12,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
-# Voice Controlled Motor
+#
+# traffic_light_zero.py
+# Voice Controlled Traffic Light
+# Use Gpiozero module
 # Modified by Kentaro Murayama
-# 2018-08-12
-# 
+# 2018-08-15
+#
 
 """Run a recognizer using the Google Assistant Library.
 
@@ -38,44 +40,75 @@ import aiy.voicehat
 from google.assistant.library.event import EventType
 
 # Set up GPIO
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-GPIO.setup(26, GPIO.OUT)
-GPIO.setup(13, GPIO.OUT)
-GPIO.setup(5, GPIO.OUT)
-from gpiozero import PWMOutputDevice
-motor1 = PWMOutputDevice(4) # Can adjust speed simply
+from gpiozero import LED
+
+red = LED(26)
+yellow = LED(13)
+green = LED(5)
 
 logging.basicConfig(
     level=logging.INFO,
     format="[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
 )
 
-# Control motor
-def motor_on_full():
-    aiy.audio.say('Motor On. Full Speed')
-    motor1.value = 1
-    GPIO.output(26, False)
-    GPIO.output(6,  False)
-    GPIO.output(13, True)
+# Define functions to control lights
+def red_led_on():
+    aiy.audio.say('Red light on')
+    red.on()
 
-def motor_on_half():
-    aiy.audio.say('Motor On. Half Speed')
-    motor1.value = 0.5
-    GPIO.output(26, False)
-    GPIO.output(6,  True)
-    GPIO.output(13, False)
+def red_led_off():
+    aiy.audio.say('Red light off')
+    red.off()
 
-def motor_off():
-    aiy.audio.say('Motor Off.')
-    motor1.value = 0
-    GPIO.output(26, True)
-    GPIO.output(6,  False)
-    GPIO.output(13, False)
+def yellow_led_on():
+    aiy.audio.say('Yello light on')
+    yellow.on()
+
+def yellow_led_off():
+    aiy.audio.say('Yellow light off')
+    yellow.off()
+
+def green_led_on():
+    aiy.audio.say('Green light on')
+    green.on()
+
+def green_led_off():
+    aiy.audio.say('Green light off')
+    green.off()
 
 
-# Ready functions
+def all_led_on():
+    aiy.audio.say('Turning all lights on')
+    red.on()
+    yellow.on()
+    green.on()
+
+def all_led_off():
+    aiy.audio.say('Turning all lights off')
+    red.off()
+    yellow.off()
+    green.off()
+
+
+def traffic_go():
+    aiy.audio.say('Green light. You can go.')
+    red.off()
+    yellow.off()
+    green.on()
+
+def traffic_stop():
+    aiy.audio.say('Red light. You must stop.')
+    red.on()
+    yellow.off()
+    green.off()
+
+def traffic_caution():
+    aiy.audio.say('Yellow light. Be careful.')
+    red.off()
+    yellow.on()
+    green.off()
+
+
 def power_off_pi():
     aiy.audio.say('Good bye!')
     subprocess.call('sudo shutdown now', shell=True)
@@ -91,7 +124,6 @@ def say_ip():
     aiy.audio.say('My IP address is %s' % ip_address.decode('utf-8'))
 
 
-# Main function for voice command handling
 def process_event(assistant, event):
     print(event)
     status_ui = aiy.voicehat.get_status_ui()
@@ -115,15 +147,39 @@ def process_event(assistant, event):
         elif text == 'ip address':
             assistant.stop_conversation()
             say_ip()
-        elif text == 'motor on':
+        elif text == 'red light on':
             assistant.stop_conversation()
-            motor_on_full()
-        elif text == 'motor half':
+            red_led_on()
+        elif text == 'red light off':
             assistant.stop_conversation()
-            motor_on_half()
-        elif text == 'motor off':
+            red_led_off()
+        elif text == 'yellow light on':
             assistant.stop_conversation()
-            motor_off()
+            yellow_led_on()
+        elif text == 'yellow light off':
+            assistant.stop_conversation()
+            yellow_led_off()
+        elif text == 'green light on':
+            assistant.stop_conversation()
+            green_led_on()
+        elif text == 'green light off':
+            assistant.stop_conversation()
+            green_led_off()
+        elif text == 'all lights on':
+            assistant.stop_conversation()
+            all_led_on()
+        elif text == 'all lights off':
+            assistant.stop_conversation()
+            all_led_off()
+        elif text == 'traffic go':
+            assistant.stop_conversation()
+            traffic_go()
+        elif text == 'traffic stop':
+            assistant.stop_conversation()
+            traffic_stop()
+        elif text == 'traffic caution':
+            assistant.stop_conversation()
+            traffic_caution()
 
     elif event.type == EventType.ON_END_OF_UTTERANCE:
         status_ui.status('thinking')
