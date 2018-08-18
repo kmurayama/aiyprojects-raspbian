@@ -41,9 +41,9 @@ from google.assistant.library.event import EventType
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(26, GPIO.OUT)
-GPIO.setup(13, GPIO.OUT)
-GPIO.setup(5, GPIO.OUT)
+#GPIO.setup(26, GPIO.OUT)
+#GPIO.setup(13, GPIO.OUT)
+#GPIO.setup(5, GPIO.OUT)
 from gpiozero import PWMOutputDevice
 motor1 = PWMOutputDevice(4) # Can adjust speed simply
 
@@ -56,23 +56,23 @@ logging.basicConfig(
 def motor_on_full():
     aiy.audio.say('Motor On. Full Speed')
     motor1.value = 1
-    GPIO.output(26, False)
-    GPIO.output(6,  False)
-    GPIO.output(13, True)
+    #GPIO.output(26, False)
+    #GPIO.output(6,  False)
+    #GPIO.output(13, True)
 
 def motor_on_half():
     aiy.audio.say('Motor On. Half Speed')
     motor1.value = 0.5
-    GPIO.output(26, False)
-    GPIO.output(6,  True)
-    GPIO.output(13, False)
+    #GPIO.output(26, False)
+    #GPIO.output(6,  True)
+    #GPIO.output(13, False)
 
 def motor_off():
     aiy.audio.say('Motor Off.')
     motor1.value = 0
-    GPIO.output(26, True)
-    GPIO.output(6,  False)
-    GPIO.output(13, False)
+    #GPIO.output(26, True)
+    #GPIO.output(6,  False)
+    #GPIO.output(13, False)
 
 
 # Ready functions
